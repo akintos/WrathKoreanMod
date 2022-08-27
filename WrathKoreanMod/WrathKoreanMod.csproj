@@ -1,0 +1,109 @@
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="CheckEnvironmentVars">
+
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+		<AssemblyVersion>0.0.1.0</AssemblyVersion>
+		<FileVersion>0.0.1.0</FileVersion>
+		<Description></Description>
+		<PackageProjectUrl>https://github.com/akintos/WrathKoreanMod</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/akintos/WrathKoreanMod</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<Configurations>Debug;Release;Debug Install;Release Install</Configurations>
+		<Authors>akintos</Authors>
+		<Company />
+		<Product />
+		<Copyright>Copyright 2022</Copyright>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<Version>0.0.1</Version>
+	</PropertyGroup>
+
+	<Target Name="CheckEnvironmentVars">
+		<Error Text="Please set the WrathInstallDir environment variable." Condition="'$(WrathInstallDir)' == ''" ContinueOnError="false" />
+	</Target>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug Install|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release Install|AnyCPU'">
+		<OutputPath>$(WrathInstallDir)\Mods\WrathKoreanMod\</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' Or '$(Configuration)|$(Platform)'=='Debug Install|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Install|AnyCPU'">
+		<Optimize>true</Optimize>
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Install|AnyCPU'">
+		<Optimize>false</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="Unity.TextMeshPro.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\Unity.TextMeshPro.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.AssetBundleModule.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.AssetBundleModule.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.CoreModule.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.JSONSerializeModule.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.JSONSerializeModule.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.TextCoreModule.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.TextCoreModule.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.UI.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.UI.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityModManager">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityModManager\UnityModManager.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="0Harmony">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityModManager\0Harmony.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\Assembly-CSharp.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="NewtonSoft.Json">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\NewtonSoft.Json.dll'))</HintPath>
+			<Private>False</Private>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md" Link="README.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Info.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Repository.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\sourcehanserifk">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+</Project>
+
