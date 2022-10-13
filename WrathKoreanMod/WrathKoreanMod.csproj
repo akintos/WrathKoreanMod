@@ -15,6 +15,8 @@
 		<Copyright>Copyright 2022</Copyright>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<Version>0.0.1</Version>
+
+		<LangVersion>10</LangVersion>
 	</PropertyGroup>
 
 	<Target Name="CheckEnvironmentVars">
@@ -61,6 +63,10 @@
 			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.dll'))</HintPath>
 			<Private>false</Private>
 		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule.dll">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.IMGUIModule.dll'))</HintPath>
+			<Private>false</Private>
+		</Reference>
 		<Reference Include="UnityEngine.JSONSerializeModule.dll">
 			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UnityEngine.JSONSerializeModule.dll'))</HintPath>
 			<Private>false</Private>
@@ -87,6 +93,14 @@
 		</Reference>
 		<Reference Include="NewtonSoft.Json">
 			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\NewtonSoft.Json.dll'))</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="UniRx">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\UniRx.dll'))</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="Owlcat.Runtime.UI">
+			<HintPath>$([System.IO.Path]::Combine($(WrathInstallDir), 'Wrath_Data\Managed\Owlcat.Runtime.UI.dll'))</HintPath>
 			<Private>False</Private>
 		</Reference>
 	</ItemGroup>
