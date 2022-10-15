@@ -2,12 +2,11 @@
 	"Id": "WrathKoreanMod",
 	"DisplayName": "WrathKoreanMod",
 	"Author": "akintos",
-	"Version": "0.0.1",
+	"Version": "0.1.0",
 	"ManagerVersion": "0.23.3",
 	"Requirements": [],
 	"AssemblyName": "WrathKoreanMod.dll",
-	"EntryMethod": "WrathKoreanMod.Main.Load",
+	"EntryMethod": "WrathKoreanMod.ModMain.Load",
 	"Repository": "https://raw.githubusercontent.com/akintos/WrathKoreanMod/main/WrathKoreanMod/Repository.json",
-	"HomePage": "https://www.nexusmods.com/pathfinderwrathoftherighteous/mods/##"
 }
 

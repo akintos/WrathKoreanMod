@@ -28,6 +28,11 @@ public static class Josa
 
     private static void RegisterJosaPair(string key, string josa1, string josa2, bool exceptRieul = false)
     {
+        if (key.Length != 4 || key[0] != '(')
+        {
+            throw new ArgumentException($"올바르지 않은 조사쌍 정의: {key}");
+        }
+
         _josaPatternPaird.Add(key, new JosaPair(josa1, josa2, exceptRieul));
     }
 
@@ -41,20 +46,26 @@ public static class Josa
         for (int i = 1; i < src.Length; i++)
         {
             if (src[i] != '(')
+            {
                 continue;
+            }
 
             string key = src.Substring(i, 4);
 
             if (_josaPatternPaird.TryGetValue(key, out var pair))
             {
                 char prevChar = src[i - 1];
+                if (prevChar < '가' || prevChar > '힣') // 한글 문자가 아닐 경우
+                {
+                    continue;
+                }
 
                 builder.Append(src, lastHeadIndex, i - lastHeadIndex);
                 i += 4;
                 lastHeadIndex = i;
 
-                if ((HasJong(prevChar) && !pair.exceptRieul) ||
-                    (HasJongExceptRieul(prevChar) && pair.exceptRieul))
+                if ((!pair.exceptRieul && HasJong(prevChar)) ||
+                    (pair.exceptRieul && HasJongExceptRieul(prevChar)))
                 {
                     builder.Append(pair.josa1);
                 }
