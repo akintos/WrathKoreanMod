@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk" InitialTargets="CheckEnvironmentVars">
+﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="CheckEnvironmentVars">
 
 	<PropertyGroup>
 		<TargetFramework>net472</TargetFramework>
@@ -111,6 +111,9 @@
 		</None>
 		<None Update="Info.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="ModSupport\BubbleBuffsTranslation.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Repository.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,0 +1,57 @@
+{
+  "buffsetup": "버프 설정",
+  "casting": "casting",
+  "available": "available",
+  "available.atwill": "무제한",
+  "showhidden": "숨겨진 항목 표시",
+  "showshort": "레벨당 라운드 수 표시",
+  "showreq": "Show requested",
+  "showNOTreq": "Show NOT requested",
+  "sort.name": "이름으로 정렬",
+  "group.normal": "일반",
+  "group.important": "중요",
+  "group.short": "Short",
+  "cat.spells": "주문",
+  "cat.Abilities": "능력",
+  "cat.Items": "아이템",
+  "cat.Consumables": "소모품",
+  "group.normal.tooltip.header": "Buff Normal!",
+  "group.normal.tooltip.desc": "Try to cast spells set in the buff window (Normal)",
+  "group.important.tooltip.header": "Buff Important!",
+  "group.important.tooltip.desc": "Try to cast spells set in the buff window (Important)",
+  "group.short.tooltip.header": "Buff Short!",
+  "group.short.tooltip.desc": "Try to cast spells set in the buff window (Short)",
+
+  "group.normal.log": "Buffed Normal!",
+  "group.important.log": "Buffed Important!",
+  "group.short.log": "Buffed Short!",
+  "log.skipped": "건너뜀",
+  "log.applied": "적용됨",
+
+  "hideability": "능력 숨기기",
+
+  "tooltip.results": "결과",
+  "tooltip.applied": "버프 적용됨",
+  "tooltip.skipped": "버프 건너뜀",
+  "tooltip.failed": "버프 실패함",
+  "noslot": "no free spell-slot",
+  "noarcanist": "비전 에너지 저장소 고갈됨 ",
+
+  "warn.arcanepool": "  비전 에너지 저장소 점수는 <b>계산하지 않습니다</b>!",
+
+  "limitcasts": "시전 제한",
+  "bancasts": "시전 금지",
+  "use.powerfulchange": "'강력한 변신' 사용",
+  "use.sharetransmutation": "'변신 공유' 허용'",
+  "use.azatazippymagic": "Control Azata Zippy Magic Secondary Buff",
+  "nolimit": "제한 없음",
+
+  "remove-all": "모든 목록에서 제거",
+  "add-all": "모든 목록에 추가",
+
+  "settings": "설정",
+  "settings-toggle": "버블버프 설정 창 활성화",
+  "setting-verbose": "주문 시전 애니메이션 사용",
+  "setting-in-combat": "전투중 버블버프 사용 허용",
+  "setting-overwritebuff": "이미 존재하는 버프 무시"
+}

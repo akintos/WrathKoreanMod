@@ -44,8 +44,38 @@ internal class ModSettings
         }
     }
 
+    public bool UseMachineTranslation
+    {
+        get => internalSettings.UseMachineTranslation;
+        set
+        {
+            if (internalSettings.UseMachineTranslation != value)
+            {
+                internalSettings.UseMachineTranslation = value;
+                SaveSettings();
+            }
+        }
+    }
+
+    public bool MachineTranslationPrefixed
+    {
+        get => internalSettings.MachineTranslationPrefixed;
+        set
+        {
+            if (internalSettings.MachineTranslationPrefixed != value)
+            {
+                internalSettings.MachineTranslationPrefixed = value;
+                SaveSettings();
+            }
+        }
+    }
+
     private class InternalSettings
     {
         public bool ShowDialogWeblateLink { get; set; } = false;
+
+        public bool UseMachineTranslation { get; set; } = false;
+
+        public bool MachineTranslationPrefixed { get; set; } = false;
     }
 }

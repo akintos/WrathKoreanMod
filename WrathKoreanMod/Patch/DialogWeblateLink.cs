@@ -70,8 +70,12 @@ internal static class DialogWeblateLink
     /// <summary>
     /// 링크 툴팁 우클릭시 다이얼로그를 여는 대신 웹레이트 링크 실행
     /// </summary>
-    [HarmonyPatch(typeof(TooltipHelper))]
-    [HarmonyPatch(nameof(TooltipHelper.ShowInfo),
+    [HarmonyPatch(
+        // class name
+        typeof(TooltipHelper),
+        // method name
+        nameof(TooltipHelper.ShowInfo),
+        // argument types
         typeof(TooltipBaseTemplate),
         typeof(ConsoleNavigationBehaviour)
     )]
@@ -81,7 +85,7 @@ internal static class DialogWeblateLink
         {
             if (template is TooltipTemplateWeblateLink link)
             {
-                Application.OpenURL($"http://akintos.iptime.org/translate/pathfinder-wotr/dialogue/ko/?offset=1&q=" + link.DialogStringKey);
+                Application.OpenURL($"https://waldo.team/translate/pathfinder-wotr/dialogue/ko/?offset=1&q=" + link.DialogStringKey);
                 return false;
             }
             return true;
@@ -91,7 +95,12 @@ internal static class DialogWeblateLink
     /// <summary>
     /// 툴팁 데이터가 웹레이트 링크면 마우스 호버링시 툴팁을 표시하지 않음
     /// </summary>
-    [HarmonyPatch(typeof(TooltipContextVM), "HandleTooltipRequest")]
+    [HarmonyPatch(
+        // class name
+        typeof(TooltipContextVM),
+        // method name
+        nameof(TooltipContextVM.HandleTooltipRequest)
+    )]
     private static class TooltipContextVM_HandleTooltipRequest_Patch
     {
         public static bool Prefix(TooltipData data)
