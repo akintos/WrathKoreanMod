@@ -9,6 +9,8 @@ namespace WrathKoreanMod.ModSupport;
 [HarmonyPatch]
 internal class BubbleBuffs
 {
+    internal static bool BubbleBuffsInstalled { get; private set; } = false;
+
     private const string TARGET_CLASS_NAME = "BubbleBuffs.Config.Language";
     private const string TARGET_METHOD_NAME = "Get";
 
@@ -24,9 +26,9 @@ internal class BubbleBuffs
         }
 
         targetClass = AccessTools.TypeByName(TARGET_CLASS_NAME);
-        bool bubbleBuffsInstalled = targetClass is not null;
-        ModMain.LogInfo("BubbleBuff 설치: " + bubbleBuffsInstalled);
-        if (!bubbleBuffsInstalled)
+        BubbleBuffsInstalled = targetClass is not null;
+        ModMain.LogInfo("BubbleBuff 설치: " + BubbleBuffsInstalled);
+        if (!BubbleBuffsInstalled || !ModMain.Settings.ModSupportBubbleBuffs)
         {
             return false;
         }

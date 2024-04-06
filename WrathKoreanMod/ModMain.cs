@@ -8,6 +8,7 @@ using TMPro;
 using Kingmaker;
 using Kingmaker.TextTools;
 using WrathKoreanMod.TextTemplates;
+using WrathKoreanMod.ModSupport;
 
 namespace WrathKoreanMod;
 
@@ -19,7 +20,7 @@ public class ModMain
 
     private static TMP_FontAsset KoreanFont;
 
-    internal static ModSettings Settings { get; private set; }
+    internal static KoreanModSettings Settings { get; private set; }
 
     internal static bool Load(UnityModManager.ModEntry modEntry)
     {
@@ -30,8 +31,7 @@ public class ModMain
 
         try
         {
-            string settingsPath = Path.Combine(ModEntry.Path, "settings.json");
-            Settings = new ModSettings(settingsPath);
+            Settings = UnityModManager.ModSettings.Load<KoreanModSettings>(modEntry);
 
             RegisterTextTemplates();
 
@@ -47,7 +47,7 @@ public class ModMain
 
         modEntry.OnGUI = OnGui;
         modEntry.OnToggle = OnToggle;
-        // modEntry.OnUpdate = OnUpdate;
+        modEntry.OnSaveGUI = OnSaveGUI;
 
         return true;
     }
@@ -64,6 +64,24 @@ public class ModMain
 
     static void OnGui(UnityModManager.ModEntry modEntry)
     {
+        GUIStyle titleStyle = new();
+        titleStyle.fontSize = 20;
+        titleStyle.fontStyle = FontStyle.Bold;
+        titleStyle.normal.textColor = Color.white;
+
+        if (GUILayout.Button("기본 설정으로 초기화", GUILayout.ExpandWidth(false)))
+        {
+            Settings = new KoreanModSettings();
+        }
+
+        GUILayout.Space(10);
+
+        GUILayout.Label("최신 번역 갱신 날짜: " + TranslationManager.Instance.TranslationBuildTimestamp.ToString("yyyy년 M월 d일 H시 m분"));
+        GUILayout.Label($"번역 진행률: {TranslationManager.Instance.Translation.Translated} / {TranslationManager.Instance.Translation.Total}");
+
+        GUILayout.Label("번역 설정", titleStyle);
+        GUILayout.Label("번역 설정 변경은 이미 표시된 텍스트에는 적용되지 않으며, 새로운 텍스트가 표시될 때 적용됩니다.");
+
         Settings.ShowDialogWeblateLink = GUILayout.Toggle(Settings.ShowDialogWeblateLink, "대사에 웹레이트 링크 표시");
         Settings.UseMachineTranslation = GUILayout.Toggle(Settings.UseMachineTranslation, "기계번역 사용");
         
@@ -71,9 +89,25 @@ public class ModMain
         {
             GUILayout.BeginHorizontal();
             GUILayout.Space(20);
-            Settings.MachineTranslationPrefixed = GUILayout.Toggle(Settings.MachineTranslationPrefixed, "기계번역 앞에 [MT] 표시");
+            Settings.MachineTranslationPrefixed = GUILayout.Toggle(Settings.MachineTranslationPrefixed, "기계번역 텍스트 앞에 '[MT]' 표시 (우클릭시 원문 표시)");
             GUILayout.EndHorizontal();
         }
+
+        GUILayout.Space(10);
+
+        GUILayout.Label("모드 지원", titleStyle);
+        GUILayout.Label("모드 설정 변경은 게임을 재시작해야 적용됩니다.");
+
+        Settings.ModSupportBubbleBuffs = GUILayout.Toggle(Settings.ModSupportBubbleBuffs, "BubbleBuffs (버블버프)");
+        Settings.ModSupportScalingCantrips = GUILayout.Toggle(Settings.ModSupportScalingCantrips, "Scaling Cantrips (스케일링 캔트립)");
+
+        // add trailing space
+        GUILayout.Space(10);
+    }
+
+    static void OnSaveGUI(UnityModManager.ModEntry modEntry)
+    {
+        Settings.Save(modEntry);
     }
 
     static bool OnToggle(UnityModManager.ModEntry modEntry, bool value)

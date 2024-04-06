@@ -15,7 +15,7 @@ internal static class ScalingCantripsPatch
 
         targetMethod = AccessTools.Method("ScalingCantrips.Utilities.Helpers:CreateString");
         ModMain.LogInfo($"ScalingCantrips 설치: {targetMethod != null}");
-        return targetMethod != null;
+        return targetMethod != null && ModMain.Settings.ModSupportScalingCantrips;
     }
 
     public static T GetSetting<T>(string name) where T : struct
@@ -108,7 +108,12 @@ internal static class CantripPatcher_Patch
 {
     public static bool Prepare(MethodBase original)
     {
-        return AccessTools.TypeByName("ScalingCantrips.CantripPatcher") != null;
+        if (original is not null)
+        {
+            return true;
+        }
+
+        return AccessTools.TypeByName("ScalingCantrips.CantripPatcher") != null && ModMain.Settings.ModSupportScalingCantrips;
     }
 
     public static IEnumerable<MethodBase> TargetMethods()
