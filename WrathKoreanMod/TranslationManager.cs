@@ -1,8 +1,8 @@
-﻿using Kingmaker.Localization;
-using Kingmaker.Utility;
-using System.Collections;
+﻿using System.Collections;
 using System.Reflection;
-using WrathKoreanMod.Patch;
+
+using Kingmaker.Localization;
+using Kingmaker.Utility;
 
 namespace WrathKoreanMod;
 
@@ -28,7 +28,25 @@ internal class TranslationManager
         }
 
         string translationPath = Path.Combine(resourcesPath, "translation.json");
-        Translation = LoadLatestTranslation(translationPath);
+        try
+        {
+            DownloadLatestTranslation(translationPath);
+        }
+        catch (Exception e)
+        {
+            ModMain.LogInfo("최신 번역 데이터를 다운로드하는데 실패했습니다. 저장된 번역 데이터를 사용합니다.");
+            ModMain.LogError(e);
+        }
+
+        try
+        {
+            Translation = LoadTranslationFile(translationPath);
+        }
+        catch (Exception)
+        {
+            ModMain.LogInfo("저장된 번역 데이터를 불러오는데 실패했습니다. 한국어 번역을 비활성화합니다.");
+            throw;
+        }
 
         string machineTranslationPath = Path.Combine(resourcesPath, "machinetranslation.json");
         if (File.Exists(machineTranslationPath))
@@ -40,7 +58,7 @@ internal class TranslationManager
         Initialized = true;
     }
 
-    private TranslationStorage LoadLatestTranslation(string translationPath)
+    private void DownloadLatestTranslation(string translationPath)
     {
         using GithubClient ghc = new();
 
@@ -57,27 +75,47 @@ internal class TranslationManager
             ModMain.LogInfo("저장된 번역 데이터가 존재하지 않습니다.");
         }
 
-        GithubClient.Release latestRelease = ghc.GetLatestRelease();
+        GithubClient.Release latestRelease;
+
+        try
+        {
+            latestRelease = ghc.GetLatestRelease();
+        }
+        catch (Exception e)
+        {
+            ModMain.LogInfo("서버에서 최신 번역 정보를 가져오는데 실패했습니다.");
+            ModMain.LogError(e);
+            return;
+        }
+
         DateTime lastReleaseTime = latestRelease.published_at.ToLocalTime();
         ModMain.LogInfo($"최신 번역 데이터 생성 시점: {lastReleaseTime}");
 
-        if (localFileTime >= lastReleaseTime)
+        if (localFileTime.AddMinutes(5) >= lastReleaseTime)
         {
             TranslationBuildTimestamp = localFileTime;
             ModMain.LogInfo("이미 최신 번역 데이터를 가지고 있습니다.");
+            return;
         }
-        else
+
+        ModMain.LogInfo("최신 번역 데이터를 다운로드합니다...");
+        GithubClient.Release.Asset translationJsonAsset = latestRelease.assets.First(x => x.name == "translation.json.gz");
+
+        try
         {
-            ModMain.LogInfo("최신 번역 데이터를 다운로드합니다...");
-            GithubClient.Release.Asset translationJsonAsset = latestRelease.assets.First(x => x.name == "translation.json.gz");
             ghc.DownloadGzipCompressedAssetFile(translationJsonAsset, translationPath);
-            File.SetLastWriteTimeUtc(translationPath, lastReleaseTime);
-
-            TranslationBuildTimestamp = lastReleaseTime;
-            ModMain.LogInfo("다운로드가 완료되었습니다.");
+        }
+        catch (Exception e)
+        {
+            ModMain.LogInfo("번역 데이터 다운로드에 실패했습니다.");
+            ModMain.LogError(e);
+            return;
         }
 
-        return LoadTranslationFile(translationPath);
+        File.SetLastWriteTimeUtc(translationPath, lastReleaseTime);
+
+        TranslationBuildTimestamp = lastReleaseTime;
+        ModMain.LogInfo("다운로드가 완료되었습니다.");
     }
 
     private static TranslationStorage LoadTranslationFile(string translationPath)

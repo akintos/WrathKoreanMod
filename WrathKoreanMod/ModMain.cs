@@ -76,8 +76,18 @@ public class ModMain
 
         GUILayout.Space(10);
 
-        GUILayout.Label("최신 번역 갱신 날짜: " + TranslationManager.Instance.TranslationBuildTimestamp.ToString("yyyy년 M월 d일 H시 m분"));
-        GUILayout.Label($"번역 진행률: {TranslationManager.Instance.Translation.Translated} / {TranslationManager.Instance.Translation.Total}");
+
+        string buildTime = TranslationManager.Instance.TranslationBuildTimestamp.ToString("yyyy년 M월 d일 H시 m분");
+        int translated = TranslationManager.Instance.Translation.Translated;
+        int total = TranslationManager.Instance.Translation.Total;
+        float progress = (float)translated / total;
+
+        GUILayout.Label(
+            "최신 번역 갱신 날짜: " + buildTime
+            + $"\n번역 진행률: {translated} / {total} ({progress:P})"
+        );
+
+        GUILayout.Space(10);
 
         GUILayout.Label("번역 설정", titleStyle);
         GUILayout.Label("번역 설정 변경은 이미 표시된 텍스트에는 적용되지 않으며, 새로운 텍스트가 표시될 때 적용됩니다.");
@@ -101,7 +111,6 @@ public class ModMain
         Settings.ModSupportBubbleBuffs = GUILayout.Toggle(Settings.ModSupportBubbleBuffs, "BubbleBuffs (버블버프)");
         Settings.ModSupportScalingCantrips = GUILayout.Toggle(Settings.ModSupportScalingCantrips, "Scaling Cantrips (스케일링 캔트립)");
 
-        // add trailing space
         GUILayout.Space(10);
     }
 
