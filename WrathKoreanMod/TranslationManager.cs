@@ -1,4 +1,4 @@
-using Kingmaker.Localization;
+﻿using Kingmaker.Localization;
 using Kingmaker.Utility;
 using System.Collections;
 using System.Reflection;
@@ -111,5 +111,22 @@ internal class TranslationManager
 
         translated = null;
         return false;
+    }
+
+    private static IDictionary GetOriginalLocalizationPackData()
+    {
+        return (IDictionary)AccessTools.Field(typeof(LocalizationPack), "m_Strings").GetValue(LocalizationManager.CurrentPack);
+    }
+
+    private static IDictionary originalLocalizationPackData;
+
+    private static readonly Type stringEntryType = typeof(LocalizationPack).GetNestedType("StringEntry", BindingFlags.NonPublic);
+    private static readonly FieldInfo stringEntryTextField = stringEntryType.GetField("Text");
+
+    public static string GetOriginalString(string key)
+    {
+        originalLocalizationPackData ??= GetOriginalLocalizationPackData();
+        object entry = originalLocalizationPackData[key];
+        return (string)stringEntryTextField.GetValue(entry);
     }
 }
