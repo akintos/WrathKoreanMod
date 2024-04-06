@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO.Compression;
+using System.Net;
 using Newtonsoft.Json;
 
 namespace WrathKoreanMod;
@@ -57,8 +58,23 @@ public class GithubClient : IDisposable
 
     public void DownloadAssetFile(Release.Asset asset, string path)
     {
-        string assetUrl = $"/repos/{OWNER}/{REPO}/releases/assets/{asset.id}";
+        string assetUrl = asset.url;
         PrepareWebClient("application/octet-stream").DownloadFile(assetUrl, path);
+        ModMain.LogDebug($"Downloaded asset: {asset.name}");
+    }
+
+    public void DownloadGzipCompressedAssetFile(Release.Asset asset, string path)
+    {
+        string assetUrl = asset.url;
+        WebClient client = PrepareWebClient("application/octet-stream");
+
+        using Stream downloadStream = client.OpenRead(assetUrl);
+        using GZipStream gzipStream = new(downloadStream, CompressionMode.Decompress);
+        using Stream fileStream = File.Create(path);
+
+        gzipStream.CopyTo(fileStream);
+
+        ModMain.LogDebug($"Downloaded asset: {asset.name}");
     }
 
     private T DeserializeJsonRequest<T>(string url)
@@ -88,10 +104,17 @@ public class GithubClient : IDisposable
             public int id;
             public string name;
 
+            public string url;
+
             public DateTime created_at;
             public DateTime published_at;
 
             public string browser_download_url;
+        }
+
+        public Asset GetAssetByName(string name)
+        {
+            return assets.First(asset => asset.name == name);
         }
     }
 }

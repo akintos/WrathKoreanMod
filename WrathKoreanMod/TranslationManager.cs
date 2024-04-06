@@ -1,4 +1,8 @@
-﻿using Kingmaker.Utility;
+using Kingmaker.Localization;
+using Kingmaker.Utility;
+using System.Collections;
+using System.Reflection;
+using WrathKoreanMod.Patch;
 
 namespace WrathKoreanMod;
 
@@ -11,8 +15,10 @@ internal class TranslationManager
 
     public bool Initialized { get; private set; } = false;
 
-    private Dictionary<string, string> Translation { get; set; }
-    private Dictionary<string, string> MachineTranslation { get; set; }
+    internal TranslationStorage Translation { get; private set; }
+    internal TranslationStorage MachineTranslation { get; private set; }
+
+    internal DateTime TranslationBuildTimestamp { get; private set; }
 
     public void Initialize(string resourcesPath)
     {
@@ -34,12 +40,22 @@ internal class TranslationManager
         Initialized = true;
     }
 
-    private Dictionary<string, string> LoadLatestTranslation(string translationPath)
+    private TranslationStorage LoadLatestTranslation(string translationPath)
     {
         using GithubClient ghc = new();
 
-        DateTime localFileTime = File.GetLastWriteTime(translationPath);
-        ModMain.LogInfo($"현재 번역 데이터 생성 시점: {localFileTime}");
+        DateTime localFileTime;
+
+        if (File.Exists(translationPath))
+        {
+            localFileTime = File.GetLastWriteTime(translationPath);
+            ModMain.LogInfo($"현재 번역 데이터 생성 시점: {localFileTime}");
+        }
+        else
+        {
+            localFileTime = DateTime.MinValue;
+            ModMain.LogInfo("저장된 번역 데이터가 존재하지 않습니다.");
+        }
 
         GithubClient.Release latestRelease = ghc.GetLatestRelease();
         DateTime lastReleaseTime = latestRelease.published_at.ToLocalTime();
@@ -47,41 +63,42 @@ internal class TranslationManager
 
         if (localFileTime >= lastReleaseTime)
         {
+            TranslationBuildTimestamp = localFileTime;
             ModMain.LogInfo("이미 최신 번역 데이터를 가지고 있습니다.");
-            return LoadTranslationFile(translationPath);
         }
+        else
+        {
+            ModMain.LogInfo("최신 번역 데이터를 다운로드합니다...");
+            GithubClient.Release.Asset translationJsonAsset = latestRelease.assets.First(x => x.name == "translation.json.gz");
+            ghc.DownloadGzipCompressedAssetFile(translationJsonAsset, translationPath);
+            File.SetLastWriteTimeUtc(translationPath, lastReleaseTime);
 
-        ModMain.LogInfo("최신 번역 데이터를 다운로드합니다...");
-        GithubClient.Release.Asset translationJsonAsset = latestRelease.assets.First(x => x.name == "translation.json");
-        ghc.DownloadAssetFile(translationJsonAsset, translationPath);
-        File.SetLastWriteTimeUtc(translationPath, lastReleaseTime);
+            TranslationBuildTimestamp = lastReleaseTime;
+            ModMain.LogInfo("다운로드가 완료되었습니다.");
+        }
 
         return LoadTranslationFile(translationPath);
     }
 
-    private static Dictionary<string, string> LoadTranslationFile(string translationPath)
+    private static TranslationStorage LoadTranslationFile(string translationPath)
     {
-        Dictionary<string, string> translation;
+        var translation = NewtonsoftJsonHelper.DeserializeFromFile<TranslationStorage>(translationPath);
 
-        using (StreamReader streamReader = new(translationPath))
-        {
-            translation = NewtonsoftJsonHelper.Deserialize<Dictionary<string, string>>(streamReader);
-        }
-
-        ModMain.LogDebug($"{Path.GetFileName(translationPath)}: {translation.Count}");
+        ModMain.LogDebug($"{Path.GetFileName(translationPath)}: {translation.Total}");
 
         return translation;
     }
 
     public bool TryTranslate(string key, out string translated)
     {
-        if (Translation is not null && Translation.TryGetValue(key, out translated))
+        if (Translation is not null 
+            && Translation.TryGetValue(key, out translated))
         {
             return true;
         }
 
         if (ModMain.Settings.UseMachineTranslation 
-            && MachineTranslation != null
+            && MachineTranslation is not null
             && MachineTranslation.TryGetValue(key, out translated))
         {
             if (ModMain.Settings.MachineTranslationPrefixed)
